@@ -190,7 +190,7 @@ function updateScoreboard() {
 	if (fruitvalue > 50) fruitvalue-=.5;
 
 	document.getElementById('points').innerHTML = "<p><span class = 'name'>CURRENT SCORE</span>: <span class = 'amt'>" + score + "</span><br> <span class = 'name'>FRUIT TAKEN</span>: <span class = 'amt'>" + taken + "</span><br> <span class = 'name'>FRUIT VALUE</span>: " 
-												+ Math.floor(fruitvalue) + "<br><span class = 'name'>SNAKE LENGTH</span>: " + snake_length + " pieces long";
+												+ Math.floor(fruitvalue) + "<br><span class = 'name'>SNAKE LENGTH</span>: " + snake_length + " pieces";
 	document.getElementById('best').innerHTML = "<p>HIGH SCORE: " + getScore(gametype) + "<br>MOST FRUIT: " + getFruitScore(gametype) + "</p>";
 
 	if (gametype != games.at(-1).name && getFruitScore(gametype) < scoreToContinue(gametype))
