@@ -10,9 +10,9 @@ games = [
 	{ name: "Tick_Tock", score: 28, title: "Tick Tock", dev: 38 },
 	{ name: "Flash", score: 16, title: "Light Switch", dev: 31 },
 	{ name: "Phantom_Snake", score: 25, title: "Phantom Snake", dev: 44 },
-	{ name: "Dodge", score: 15, title: "Dodgeball", dev: 21 },
-	{ name: "Frogger", score: 13, title: "Frogger", dev: 19 },
-	{ name: "Good_Luck", score: 12, title: "Good Luck", dev: 15 },
+	{ name: "Dodge", score: 13, title: "Dodgeball", dev: 21 },
+	{ name: "Frogger", score: 12, title: "Frogger", dev: 19 },
+	{ name: "Good_Luck", score: 11, title: "Good Luck", dev: 15 },
 	{ name: "Shots_Fired", score: 16, title: "Shots Fired", dev: 27 },
 	{ name: "No_Survivors", score: 0, title: "No Survivors", dev: 12 },
 ];
