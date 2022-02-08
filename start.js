@@ -56,7 +56,6 @@ $(document).ready(function(){
 		);
 
 		$(document).on("click", "#close", function() {
-				console.log("hello");
 				$("#game-over-screen").remove();
 			}
 		);		
