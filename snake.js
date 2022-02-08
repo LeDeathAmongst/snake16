@@ -64,22 +64,29 @@ function setGame(game){
 	
 	for (var i = 0; i < games.length; i++) {
 		if (games[i].name == gametype) { 
-			document.getElementById(games[i].name).style.background = "#607480";
+			document.getElementById(games[i].name).style.filter = "var(--hover-color)";
 			document.getElementById(games[i].name).style.fontWeight = "bold";
 			document.getElementById(games[i].name).innerHTML = "* " + games[i].title + " *";
 		} else if (!document.getElementById(games[i].name).disabled) {
-			document.getElementById(games[i].name).style.background = "#485157";
+			document.getElementById(games[i].name).style.filter = "none";			
 			document.getElementById(games[i].name).style.color = "#fafafa";
 			document.getElementById(games[i].name).style.fontWeight = "normal";
 			document.getElementById(games[i].name).innerHTML = games[i].title;
 		}
 	}
 
-	if (gamecounter == 0) main();
-	else init();
+	main();
 }
 
 function main() {
+	if (gamecounter > 0) {
+		if (document.getElementById("game-over-screen") != null) document.getElementById("game-over-screen").remove();
+		window.cancelAnimationFrame(globalID);
+		globalID = undefined;
+	}
+
+	stopAnimating = false;
+
 	canvas = document.getElementById("grid");
 	canvas.width = COLS*20;
 	canvas.height = ROWS*20;
@@ -89,7 +96,7 @@ function main() {
 	document.addEventListener("keydown", function(evt) { keystate[evt.keyCode] = true; });
 	document.addEventListener("keyup", function(evt) { keystate[evt.keyCode] = false; });
 
-	document.querySelectorAll("button").forEach(function(el) {
+	document.querySelectorAll("button:not(#auto)").forEach(function(el) {
 		el.addEventListener("mouseover", function() {
 			var index = games.findIndex(cell => cell.name === el.id);
 			if (text != null) document.getElementById("descr").innerHTML = "<span class = 'name'>" + games[index].title.toUpperCase() + "</span>: " + text[index+1];
@@ -109,8 +116,11 @@ function main() {
 
 function loop() {
 	update();
-	draw();
-	globalID = window.requestAnimationFrame(loop, canvas);
+
+	if (!stopAnimating) {
+		draw();
+		globalID = window.requestAnimationFrame(loop, canvas);
+	}
 }
 
 function init() {
@@ -159,13 +169,17 @@ function update() {
 	if (movefruit && timeToMove(FRUIT)) move(FRUIT);
 	if (movebombs && timeToMove(BOMB)) move(BOMB);
 	if (hasmissiles && timeToMove(MISSILE)) move(MISSILE);
+	if (reset) {
+		gameReset();
+		return;
+	}
 
 	snake.forEach(function(s, i) {
 		if ((timeToMove(SNAKE) && i == 0) || (timeToMove(CLONE) && i == 1)) {
 			move(SNAKE+i);
-			if (gameOver(s.head.x, s.head.y) && i == 0 || reset) {
+			if (gameOver(s.head.x, s.head.y) && i == 0) {
 				gameReset();
-				return setGame(gametype);
+				return;
 			}
 
 			if (at(FRUIT, s.head.x, s.head.y)) collectedFruit(s.head.x, s.head.y, i);
@@ -404,7 +418,34 @@ function getGameAttributes() {
 function gameReset() {
 	unlockGames();
 	if (clone) snake.pop();  //get rid of clone snake before next game
-	if (!confirm("You died with " + taken + " fruit. Press OK to play again. Press cancel to pick another level.")) location.reload();
+
+	window.cancelAnimationFrame(globalID);
+	globalID = undefined;
+	stopAnimating = true;
+
+	let death_screen = document.createElement("div");
+	death_screen.setAttribute("id", "game-over-screen");
+
+	
+	let message = document.createElement("div");
+	let restart = document.createElement("button");
+	let choose_another = document.createElement("button");
+	
+	message.setAttribute("id", "message");
+	message.innerHTML = "Sorry! You died.<br>Fruit taken: " + taken + "<br>Total score: " + score;
+	
+	restart.setAttribute("id", "restart");
+	restart.innerHTML = "Try again!";
+
+	choose_another.setAttribute("id", "close");
+	choose_another.innerHTML = "Close";
+	
+	death_screen.appendChild(message);
+	death_screen.appendChild(restart);
+	death_screen.appendChild(choose_another);
+	
+	document.getElementById("container").appendChild(death_screen);
+
 }
 
 function gameOver(x, y) {

@@ -49,6 +49,17 @@ $(document).ready(function(){
 				original();
 			}
 		);
+
+		$(document).on("click", "#restart", function() {
+				setGame(gametype);
+			}
+		);
+
+		$(document).on("click", "#close", function() {
+				console.log("hello");
+				$("#game-over-screen").remove();
+			}
+		);		
 	//localStorage.clear();   //uncomment to clear highscores
 });
 
@@ -93,7 +104,7 @@ function unlockGames() {
 	for (i = 0; i < games.length-1; i++) {
 		if (getFruitScore(games[i].name) >= games[i].score) { 
 			document.getElementById(games[i+1].name).disabled = false;
-			document.getElementById(games[i+1].name).innerHTML =  games[i+1].title;
+			document.getElementById(games[i+1].name).innerHTML = games[i+1].title;
 		} else { 
 			document.getElementById(games[i+1].name).disabled = true;
 			document.getElementById(games[i+1].name).innerHTML = "LOCKED"
