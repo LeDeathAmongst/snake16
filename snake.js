@@ -3,6 +3,7 @@ var gamecounter = 0, snakespeed = 5;
 const EMPTY = 0, SNAKE = 1, CLONE = 2, FRUIT = 3, BOMB = 4, WALL = 5, MARKED = 6, MISSILE = 7, HEAD = 8, CLONEHEAD = 9;
 const left  = 0, up = 1, right = 2, down  = 3;
 const larrow = 37, uarrow = 38, rarrow = 39, darrow = 40;
+var th, tw;
 
 grid = {
 	width: null, 
@@ -60,27 +61,20 @@ snake = [{
 }];
 
 function setGame(game){
+	if (gamecounter > 0) gameReset();
+
 	gametype = game;
 	
-	for (var i = 0; i < games.length; i++) {
-		if (games[i].name == gametype) { 
-			document.getElementById(games[i].name).style.filter = "var(--hover-color)";
-			document.getElementById(games[i].name).style.fontWeight = "bold";
-			document.getElementById(games[i].name).innerHTML = "* " + games[i].title + " *";
-		} else if (!document.getElementById(games[i].name).disabled) {
-			document.getElementById(games[i].name).style.filter = "none";			
-			document.getElementById(games[i].name).style.color = "#fafafa";
-			document.getElementById(games[i].name).style.fontWeight = "normal";
-			document.getElementById(games[i].name).innerHTML = games[i].title;
-		}
-	}
-
+	document.getElementById(gametype).style.filter = "var(--hover-color)";
+	document.getElementById(gametype).style.fontWeight = "bold";
+	document.getElementById(gametype).innerHTML = "* " + games[games.findIndex(e => e.name == gametype)].title + " *";
+	
 	main();
 }
 
 function main() {
 	if (gamecounter > 0) {
-		if (document.getElementById("game-over-screen") != null) document.getElementById("game-over-screen").remove();
+		if (document.getElementsByClassName("game-over popup")[0] != null) document.getElementsByClassName("game-over popup")[0].remove();
 		window.cancelAnimationFrame(globalID);
 		globalID = undefined;
 	}
@@ -96,17 +90,17 @@ function main() {
 	document.addEventListener("keydown", function(evt) { keystate[evt.keyCode] = true; });
 	document.addEventListener("keyup", function(evt) { keystate[evt.keyCode] = false; });
 
-	document.querySelectorAll("button:not(#auto)").forEach(function(el) {
-		el.addEventListener("mouseover", function() {
-			var index = games.findIndex(cell => cell.name === el.id);
-			if (text != null) document.getElementById("descr").innerHTML = "<span class = 'name'>" + games[index].title.toUpperCase() + "</span>: " + text[index+1];
-			else document.getElementById("descr").innerHTML = "This would be new text!";
+	document.querySelectorAll("button.game").forEach(function(e) {
+		e.addEventListener("mouseover", function() {
+			var index = games.findIndex(cell => cell.name === e.id);
+			if (text != null) document.getElementsByClassName("description")[0].innerHTML = "<span class = 'name'>" + games[index].title.toUpperCase() + "</span>: " + text[index+1];
+			else document.getElementsByClassName("description")[0].innerHTML = "This would be new text!";
 		});
 
-		el.addEventListener("mouseout", function() {
+		e.addEventListener("mouseout", function() {
 			var index = games.findIndex(cell => cell.name === gametype);
-			if (text != null) document.getElementById("descr").innerHTML = "<span class = 'name'>" + games[index].title.toUpperCase() + "</span>: " + text[index+1];
-			else document.getElementById("descr").innerHTML = "Back to the original!";
+			if (text != null) document.getElementsByClassName("description")[0].innerHTML = "<span class = 'name'>" + games[index].title.toUpperCase() + "</span>: " + text[index+1];
+			else document.getElementsByClassName("description")[0].innerHTML = "Back to the original!";
 		  });
 	  });
 
@@ -125,7 +119,7 @@ function loop() {
 
 function init() {
 	beammeup = reset = false;
-	frames = score = taken = 0, fruitvalue = 250;
+	frames = score = taken = 0, fruit_value = 250;
 	COLS = ROWS = 26, snake_length = 4;
 	bombs = [], missiles = [], fruit = [], emptycells = [];
 	gamecounter++;
@@ -138,6 +132,9 @@ function init() {
 			emptycells.push({direction:null, x:i, y:j});
 		}
 	}
+
+	tw = canvas.width/grid.width;
+	th = canvas.height/grid.height;
 
 	getGameAttributes();
 	initSnakes();
@@ -171,6 +168,7 @@ function update() {
 	if (hasmissiles && timeToMove(MISSILE)) move(MISSILE);
 	if (reset) {
 		gameReset();
+		gameOverScreen();
 		return;
 	}
 
@@ -178,7 +176,11 @@ function update() {
 		if ((timeToMove(SNAKE) && i == 0) || (timeToMove(CLONE) && i == 1)) {
 			move(SNAKE+i);
 			if (gameOver(s.head.x, s.head.y) && i == 0) {
+				ctx.fillStyle = "pink";
+				ctx.fillRect(s.head.x*tw+1, s.head.y*th+1, tw-2, th-2);
+
 				gameReset();
+				gameOverScreen();
 				return;
 			}
 
@@ -193,7 +195,7 @@ function update() {
 		}
 	});
 
-	if (tick && frames%50 == 0 && fruitvalue < 175) set(1, BOMB);
+	if (tick && frames%50 == 0 && fruit_value < 175) set(1, BOMB);
 	if (hasmissiles && frames%20 == 0) set(1, MISSILE, 0, Math.round(Math.random()*COLS-1));
 	if (bombs && flash) bombs.forEach(function(b) { b.life++ });
 	
@@ -201,41 +203,56 @@ function update() {
 }
 
 function updateScoreboard() {
-	if (fruitvalue > 50) fruitvalue-=.5;
+	if (fruit_value > 50) fruit_value-=.5;
 
-	document.getElementById('points').innerHTML = "<p><span class = 'name'>CURRENT SCORE</span>: <span class = 'amt'>" + score + "</span><br> <span class = 'name'>FRUIT TAKEN</span>: <span class = 'amt'>" + taken + "</span><br> <span class = 'name'>FRUIT VALUE</span>: " 
-												+ Math.floor(fruitvalue) + "<br><span class = 'name'>SNAKE LENGTH</span>: " + snake_length + " pieces";
-	document.getElementById('best').innerHTML = "<p>HIGH SCORE: " + getScore(gametype) + "<br>MOST FRUIT: " + getFruitScore(gametype) + "</p>";
+	document.getElementsByClassName('current-score')[0].innerHTML = "<p><span class = 'name'>CURRENT SCORE</span>: <span class = 'amt'>" + score + "</span><br> <span class = 'name'>FRUIT TAKEN</span>: <span class = 'amt'>" + taken + "</span><br> <span class = 'name'>FRUIT VALUE</span>: " 
+												+ Math.floor(fruit_value) + "<br><span class = 'name'>SNAKE LENGTH</span>: " + snake_length + " pieces";
+	document.getElementsByClassName('high-score')[0].innerHTML = "<p>HIGH SCORE: " + getScore(gametype) + "<br>MOST FRUIT: " + getFruitScore(gametype) + "</p>";
 
 	if (gametype != games.at(-1).name && getFruitScore(gametype) < scoreToContinue(gametype))
-		document.getElementById('req').innerHTML = "Collect " + (scoreToContinue(gametype) - taken) + " fruit to progress.";
-	else document.getElementById('req').innerHTML = "Dev Score: " + games[games.findIndex(g => g.name === gametype)].dev + " fruit";
+		document.getElementsByClassName('score-to-beat')[0].innerHTML = "Collect " + (scoreToContinue(gametype) - taken) + " fruit to progress.";
+	else document.getElementsByClassName('score-to-beat')[0].innerHTML = "Dev Score: " + games[games.findIndex(g => g.name === gametype)].dev + " fruit";
 }
 
 function draw() {
 	resetBoard();
-	tw = canvas.width/grid.width;
-	th = canvas.height/grid.height;
 
-	ctx.fillStyle = "#ededed";
+	ctx.fillStyle = gridlines_color;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	for (var x = 0; x < grid.width; x++) {
 		for (var y = 0; y < grid.height; y++) {
             
-            if (at(WALL, x, y)) ctx.fillStyle = "#2b2b2b";
-            if (at(EMPTY, x, y)) ctx.fillStyle = "white";
-            if (at(FRUIT, x, y)) ctx.fillStyle = "#f" + getGrade();
-            if (at(BOMB, x, y)) ctx.fillStyle = (flash && flashTime(x, y)) ? ("white") : ((redbombs) ? ("red") : ("black"));
-            if (at(SNAKE, x, y)) ctx.fillStyle = (at(HEAD, x, y)) ? ("red") : ("orange"); 
-            if (at(MISSILE, x, y)) ctx.fillStyle = "orange";
-            if (at(CLONE, x, y)) ctx.fillStyle = (at(CLONEHEAD, x, y)) ? ("black") : ("gray");
+            if (at(WALL, x, y)) ctx.fillStyle = wall_color;
+            if (at(EMPTY, x, y)) ctx.fillStyle = grid_color;
+			if (at(FRUIT, x, y)) ctx.fillStyle = getGrade();
+            if (at(BOMB, x, y)) ctx.fillStyle = (flash && flashTime(x, y)) ? (grid_color) : ((redbombs) ? (fruit_color) : (bomb_color));
+            if (at(SNAKE, x, y)) ctx.fillStyle = (at(HEAD, x, y)) ? (fruit_color) : (snake_color); 
+            if (at(MISSILE, x, y)) ctx.fillStyle = snake_color;
+            if (at(CLONE, x, y)) ctx.fillStyle = (at(CLONEHEAD, x, y)) ? (clone_head_color) : (clone_color);
             
 			if (at(WALL, x, y)) ctx.fillRect(x*tw, y*th, tw, th);
 			else if ((!at(SNAKE, x, y) && !at(CLONE, x, y)) || at(HEAD, x, y) || at(CLONEHEAD, x, y)) ctx.fillRect(x*tw+1, y*th+1, tw-2, th-2);
 			else if (at(SNAKE, x, y) || at(CLONE, x, y)) drawSnakes(x , y, 0+at(CLONE, x, y)); //if at(clone) return true, itll draw a clone, otherwise a snake            
 		}
 	}
+}
+
+function getGrade() {
+	if (!grade) return fruit_color;
+	if (fruit_value < 200) return "#fff";
+	
+	let rgb = fruit_color.replace(/[^\d,]/g, '').split(',');
+	let age = 250 - fruit_value;
+	
+	let red = Math.round(age*(255 - parseInt(rgb[0]))/50);
+	let green = Math.round(age*(255 - parseInt(rgb[1]))/50);
+	let blue = Math.round(age*(255 - parseInt(rgb[2]))/50);
+
+	new_color = "rgb(" + (red + parseInt(rgb[0])) + ", " + (green + parseInt(rgb[1])) + ", " + (blue + parseInt(rgb[2])) + ")";
+
+	console.log(new_color);
+	return new_color;
 }
 
 function drawSnakes(x, y, i) {
@@ -385,7 +402,9 @@ function collision(value, array, i) {
 	} else if (value == FRUIT) { 
 		collectedFruit(snake[0].head.x, snake[0].head.y);
 		set(1, SNAKE, snake[0].head.x, snake[0].head.y);
-	} else if (value == BOMB) reset = true;
+	} else if (value == BOMB) {
+		reset = true;
+	}
 }
 
 function resetBoard() {
@@ -416,16 +435,21 @@ function getGameAttributes() {
 }
 
 function gameReset() {
-	unlockGames();
+	unlockGames(); 
 	if (clone) snake.pop();  //get rid of clone snake before next game
 
+	document.getElementById(gametype).style.fontWeight = "normal";
+	document.getElementById(gametype).style.filter = "none";
+	if (gametype == "Classic") document.getElementById(gametype).innerHTML = gametype;
+}
+
+function gameOverScreen() {
 	window.cancelAnimationFrame(globalID);
 	globalID = undefined;
 	stopAnimating = true;
 
 	let death_screen = document.createElement("div");
-	death_screen.setAttribute("id", "game-over-screen");
-
+	death_screen.setAttribute("class", "game-over popup");
 	
 	let message = document.createElement("div");
 	let restart = document.createElement("button");
@@ -437,15 +461,13 @@ function gameReset() {
 	restart.setAttribute("id", "restart");
 	restart.innerHTML = "Try again!";
 
-	choose_another.setAttribute("id", "close");
-	choose_another.innerHTML = "Close";
+	choose_another.setAttribute("class", "close");
 	
 	death_screen.appendChild(message);
 	death_screen.appendChild(restart);
 	death_screen.appendChild(choose_another);
 	
 	document.getElementById("container").appendChild(death_screen);
-
 }
 
 function gameOver(x, y) {
@@ -486,8 +508,8 @@ function checkHighScores() {
 }
 
 function updateScore() {
-	score += Math.floor(fruitvalue);
-	fruitvalue = 250;
+	score += Math.floor(fruit_value);
+	fruit_value = 250;
 	taken++;
 }
 
@@ -507,10 +529,6 @@ function teleportSnake() {
 	snake[0].head.y = fruit[0].y;
 	fruit.splice(0, 1);
 	beammeup = false;
-}
-
-function getGrade() {
-	return (!grade) ? ("00") : ((fruitvalue < 205) ? ("ff") : ((+(Math.ceil((250 - fruitvalue)/3)%16)).toString(16) + (+(Math.ceil((250 - fruitvalue)/3)%16)).toString(16)));
 }
 
 function shrinkBoard() {
