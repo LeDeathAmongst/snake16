@@ -3,10 +3,11 @@
 <head>
 	<meta charset="UTF-8">
 	<link rel = "stylesheet" type = "text/css" href = "snake.css">
-  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   	<script type = "text/javascript" src = "start.js"></script>
 	<script type = "text/javascript" src = "snake.js"></script>
   	<script type = "text/javascript" src = "auto.js"></script>
+
 	<audio preload id = "fruitsound"><source src = "boop.wav" type = "audio/wav"></audio>
 	<title>Snake!</title>
 </head>
@@ -16,15 +17,17 @@
 			<div id = "games"></div>
 			<canvas id = "grid"></canvas>
 			<div id = "score">
-				<div id = "inst"></div>
-				<div id = "descr"></div>
-				<div id = "points"></div>
-				<div id = "best"></div>
-				<div id = "req"></div>
+				<div class = "instructions"></div>
+				<div class = "description"></div>
+				<div class = "current-score"></div>
+				<div class = "high-score"></div>
+				<div class = "score-to-beat"></div>
 			</div>
 		</div>
 		<div id = "extras">
-			<button id = "auto"><a href = "https://ybenhayun.github.io/snake">GO BACK TO SNAKE</a></button>
+			<button class = "settings">SETTINGS</button>
+			<button class = "unlock">UNLOCK LEVELS</button>
+			<button id = "auto"><a href = "https://ybenhayun.github.io/snake/auto">WATCH THE SNAKE BOT</a></button>
 		</div>
 	</div>
 </body>

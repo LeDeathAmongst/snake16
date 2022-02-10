@@ -1,3 +1,5 @@
+unlocked = false;
+
 games = [
 	{ name: "Classic", score: 30, title: "Classic", dev: 126 },
 	{ name: "Bombs", score: 20, title: "Bombs", dev: 38 },
@@ -27,7 +29,7 @@ $(document).ready(function(){
 
 	$(window).resize(function() {
 		setFontSize();
-	})
+	});
 
 	$("button.game").mouseover(
 		function(){
@@ -57,6 +59,11 @@ $(document).ready(function(){
 			}
 		);
 
+		$("button.unlock").click(function() {
+			$(this).prop("disabled", true);
+			createCheatCodeBox();
+		});
+
 		$(document).on("click", "#restart", function() {
 				setGame(gametype);
 			}
@@ -64,7 +71,11 @@ $(document).ready(function(){
 		
 		$(document).on("click", ".close", function() {
 			$(".popup").remove();
-			$("button.settings").prop("disabled", false);
+			$("button:not(.game)").prop("disabled", false);
+		});
+
+		$(document).on("click", ".cheatcode", function() {
+			enterCheatCode();
 		});
 
 		$(document).on("click", ".save", function() {
@@ -110,6 +121,36 @@ $(document).ready(function(){
 	//localStorage.clear();   //uncomment to clear highscores
 });
 
+function enterCheatCode() {
+	var cheatcode = document.getElementById("cheatcode").value.toUpperCase();
+
+	if (cheatcode == "SNAKESIXTEEN") {
+		games.forEach(function(g) {
+			document.getElementById(g.name).disabled = false;
+			document.getElementById(g.name).innerHTML = g.title;
+			unlocked = true;
+		});
+	} else {
+		console.log("Wrong!");
+	}
+}
+
+function createCheatCodeBox() {
+	var unlock = document.createElement("div");
+	unlock.setAttribute("class", "unlock popup");
+
+	var close = document.createElement("button");
+	close.setAttribute("class", "close");
+
+	var input = "  <label for='cheatcode'>Enter passcode: </label><input type='text' id='cheatcode' name='cheatcode' style='text-transform: uppercase;' autofocus>" + 
+					"<button class = 'cheatcode'>Unlock all levels</button>"
+
+	unlock.innerHTML += input;
+
+	unlock.appendChild(close);
+	$("#container").append(unlock);
+}
+
 function setColors() {
 	if (localStorage.getItem("gridlines") == null) gridlines_color = "#ededed";
 	else gridlines_color = localStorage.getItem("gridlines");
@@ -125,6 +166,10 @@ function setColors() {
 
 	if (localStorage.getItem("bomb") == null) bomb_color = "#000000";
 	else bomb_color = localStorage.getItem("bomb");
+
+	clone_color = "gray";
+	clone_head_color = "black";
+	wall_color = "#2b2b2b";	
 }
 
 function showSettings() {
@@ -150,7 +195,7 @@ function showSettings() {
 
 function setFontSize() {
 	var height = $("#screen").height();
-	$("#screen").css({ fontSize: height/40 });	
+	$("html").css({ fontSize: height/40 });	
 }
 
 function original() {
@@ -187,7 +232,7 @@ function readDescriptions() {
 
 function unlockGames() {
 	for (i = 0; i < games.length-1; i++) {
-		if (getFruitScore(games[i].name) >= games[i].score) { 
+		if (getFruitScore(games[i].name) >= games[i].score || unlocked) { 
 			document.getElementById(games[i+1].name).disabled = false;
 			document.getElementById(games[i+1].name).innerHTML = games[i+1].title;
 		} else { 

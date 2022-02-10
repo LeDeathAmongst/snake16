@@ -128,20 +128,35 @@ input {
     right: 0;
 }
 
+.unlock label, #cheatcode {
+    position: absolute;
+    top: 4rem;
+}
+
+.unlock label {
+    left: 1rem;
+}
+
+#cheatcode {
+    width: 8rem;
+    right: 2rem;
+}
+
+#cheatcode:focus {
+    outline: none;
+    box-shadow: none;
+}
+
 .popup button {
-    /* position: absolute; */
     height: 2rem;
-    margin-right: 1rem;
-    /* margin-top: auto; */
-    /* max-width: 40%; */
     border: 2px solid var(--border-color);
-    /* margin-bottom: 5%; */
 }
 
 .popup button:not(.close) {
-    /* bottom: 5%; */
     margin-top: auto;
     margin-bottom: 5%;
+    margin-right: .5rem;
+    margin-left: .5rem;
 }
 
 .close {
@@ -209,19 +224,19 @@ input {
     flex: 1;
 }
 
+input[type = "color"] {
+    height: 2rem;
+    width: 3rem;
+}
+
 .high-score p {
     border: 2px dotted var(--border-color);
 }
 
 button {
-    /* flex-grow: 1;
-    width: 100%; */
     background: var(--button-color);
     color: var(--button-text);
     font-size: 1.1em;
-    /* border: 0px solid; */
-    /* border-bottom: 2px solid var(--border-color); */
-    /* border-left: 2px solid var(--border-color); */
 }
 
 button:not(.game) {
@@ -266,7 +281,7 @@ button:focus {
     height: 7%;
     width: 100%;
     font-size: 1em;
-    gap: 1rem; 
+    gap: .75rem; 
 }
 
 #extras > button {
