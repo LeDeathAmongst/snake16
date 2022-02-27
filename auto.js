@@ -1,12 +1,10 @@
 const PATH = 10;
 
-function moveSnake() {
+function moveSnake(snake) {
 	snakespeed = 1; //speed up snake for snakebot
-	sx = snake[0].head.x;
-	sy = snake[0].head.y;
-	sd = snake[0].direction;
-	fx = fruit[0].x;
-	fy = fruit[0].y;
+	sx = snake.head.x;
+	sy = snake.head.y;
+	sd = snake.direction;
 
 	var l = canGo(next(sx, left), sy, true);
 	var r = canGo(next(sx, right), sy, true);
@@ -16,7 +14,7 @@ function moveSnake() {
 	arry = [l, r, u, dw];
 
 	if (arry.filter(Number).length > 0) {
-		if (emptycells.length >= ROWS*COLS*.10) var spaces = Math.min.apply(Math, arry.filter(Number));
+		if (game.get(EMPTY).length >= game.rows*game.cols*.10) var spaces = Math.min.apply(Math, arry.filter(Number));
 		else var spaces = Math.max.apply(Math, arry.filter(Number));
 
 		if (spaces == l) sd = left;
@@ -42,9 +40,10 @@ function moveSnake() {
 		}
 	}
 
-	snake[0].direction = sd;
-	snake[0].head.x = newPosition(SNAKE, snake[0].direction, sx, sy).x;
-	snake[0].head.y = newPosition(SNAKE, snake[0].direction, sx, sy).y;
+	snake.direction = sd;
+	
+	new_pos = newPosition(SNAKE, snake.direction, snake.head.x, snake.head.y);
+	snake.insert(new_pos.x, new_pos.y);
 }
 
 function getBestDir() {
@@ -132,7 +131,7 @@ function exploreLocation(location) {
 	let allNeighbors = [];
 
 	outer:
-	if (portal && at(FRUIT, x, y)) {
+	if (game.has(PORTAL) && at(FRUIT, x, y)) {
 		for (var i = wall(left); i < wall(right); i++) {
 			for (var j = wall(up); j < wall(down); j++) {
 				if (at(FRUIT, i, j) && (i != x || j != y)) {
@@ -192,8 +191,8 @@ function toAndFrom(start, end, board) {
 		board[current.x][current.y].value = MARKED;
 
 		if ((at(FRUIT, current.x, current.y) && end == "fruit") ||
-			(((current.x == next(snake[0].body.at(-1).x, left) && current.y == snake[0].body.at(-1).y) || (current.x == next(snake[0].body.at(-1).x, right) && current.y == snake[0].body.at(-1).y) 
-			|| (current.x == snake[0].body.at(-1).x && current.y == next(snake[0].body.at(-1).y, up)) || (current.x == snake[0].body.at(-1).x && current.y == next(snake[0].body.at(-1).y, down))) && end == "tail"))  {
+			(((current.x == next(game.get(SNAKE).body.at(-1).x, left) && current.y == game.get(SNAKE).body.at(-1).y) || (current.x == next(game.get(SNAKE).body.at(-1).x, right) && current.y == game.get(SNAKE).body.at(-1).y) 
+			|| (current.x == game.get(SNAKE).body.at(-1).x && current.y == next(game.get(SNAKE).body.at(-1).y, up)) || (current.x == game.get(SNAKE).body.at(-1).x && current.y == next(game.get(SNAKE).body.at(-1).y, down))) && end == "tail"))  {
 				
 			for (var i = 0; i < board.length; i++) {
 			  	for (var j = 0; j < board[i].length; j++) {

@@ -1,9 +1,9 @@
-function moveSnake(){
-	if ((keystate[larrow]) && snake[0].direction != right) snake[0].direction = left;
-	else if ((keystate[rarrow]) && snake[0].direction != left) snake[0].direction = right;
-	else if ((keystate[uarrow]) && snake[0].direction != down) snake[0].direction = up;
-	else if ((keystate[darrow]) && snake[0].direction != up) snake[0].direction = down;
+function moveSnake(snake){
+	if ((keystate[larrow]) && snake.direction != right) snake.direction = left;
+	else if ((keystate[rarrow]) && snake.direction != left) snake.direction = right;
+	else if ((keystate[uarrow]) && snake.direction != down) snake.direction = up;
+	else if ((keystate[darrow]) && snake.direction != up) snake.direction = down;
 
-	snake[0].head.x = newPosition(SNAKE, snake[0].direction, snake[0].head.x, snake[0].head.y).x;
-	snake[0].head.y = newPosition(SNAKE, snake[0].direction, snake[0].head.x, snake[0].head.y).y;
+	new_pos = newPosition(SNAKE, snake.direction, snake.head.x, snake.head.y);
+	snake.insert(new_pos.x, new_pos.y);
 }

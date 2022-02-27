@@ -65,7 +65,7 @@ $(document).ready(function(){
 		});
 
 		$(document).on("click", "#restart", function() {
-				setGame(gametype);
+				setGame(game.type);
 			}
 		);
 		
