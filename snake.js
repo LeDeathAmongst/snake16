@@ -282,6 +282,9 @@ function draw() {
 
 function drawSnakes(x, y, snake) {
 	let index = snake.body.findIndex(cell => cell.x === x && cell.y === y);
+	if (index == -1) {
+		debugger;
+	}
 	let sx = snake.body[index].x, sy = snake.body[index].y;
 	let nx = snake.body[index-1].x, ny = snake.body[index-1].y;
 
@@ -366,7 +369,7 @@ function getsToSnake(dir, x, y, bombs) {
 function move(object) {
 	var objects = game.get(object);
 
-	if (object == SNAKE) teleport_now ? teleportSnake() : moveSnake(game.get(SNAKE));
+	if (object == SNAKE) teleport_now ? teleportSnake(objects, game.get(FRUIT)) : moveSnake(objects);
 	else if (object == CLONE) moveClone(game.get(CLONE), game.get(FRUIT)[0]);
 
 	else {
@@ -561,11 +564,10 @@ function oppositeDirection(direction) {
 	return (direction + 2) % 4;
 }
 
-function teleportSnake() {
-	set(1, EMPTY, game.get(FRUIT)[0].x, game.get(FRUIT)[0].y);   //remove this and youll get game.get(FRUIT) forever
-	game.get(SNAKE).head.x = game.get(FRUIT)[0].x;
-	game.get(SNAKE).head.y = game.get(FRUIT)[0].y;
-	game.get(FRUIT).splice(0, 1);
+function teleportSnake(snake, fruit) {
+	set(1, EMPTY, fruit[0].x, fruit[0].y);   //remove this and youll get game.get(FRUIT) forever
+	snake.insert(fruit[0].x, fruit[0].y);
+	fruit.splice(0, 1);
 	teleport_now = false;
 }
 
