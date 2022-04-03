@@ -565,7 +565,7 @@ function oppositeDirection(direction) {
 }
 
 function teleportSnake(snake, fruit) {
-	set(1, EMPTY, fruit[0].x, fruit[0].y);   //remove this and youll get game.get(FRUIT) forever
+	set(1, EMPTY, fruit[0].x, fruit[0].y);   //remove this and youll get fruit forever
 	snake.insert(fruit[0].x, fruit[0].y);
 	fruit.splice(0, 1);
 	teleport_now = false;
