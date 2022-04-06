@@ -232,6 +232,8 @@ function toAndFrom(start, end, board) {
 	return false;
 }
 
+// function to be used to determine if a bomb will be at a certain location a few steps in the future
+// needs edits to work with current bot implementation
 function bombsNearby(x, y, time) {
 	var spaces = 0;
 
