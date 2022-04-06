@@ -8,7 +8,7 @@ The 16 levels are as follows:
 1) **Classic** - Original snake game. Snake gets longer after eating a piece of fruit.
 2) **Bombs** - "Bombs" are left behind after collecting fruit. If you hit a bomb, you lose.
 3) **Colorblind** - Bombs are placed that are the same color as the fruit you need to eat.
-4) **20/20 Vision** - The fruit slowly fades until it invisible. Bombs are also left behind.
+4) **20/20 Vision** - The fruit slowly fades until it is invisible. Bombs are also left behind.
 5) **Closing In** - The grid gets smaller and smaller as you collect more fruit.
 6) **And Beyond** - The snake is 'infinitely long' from the very beginning.
 7) **Track Star** - The fruit moves across the screen. Bombs are also left behind.
