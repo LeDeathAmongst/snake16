@@ -45,4 +45,4 @@ The bot currently struggles on two things: moving bombs and portals. The current
 Play the game for yourself [here](https://ybenhayun.github.io/snake16/).
 Watch the bot play the game [here](https://ybenhayun.github.io/snake16/auto/).
 
-If you just want to take a glance at the different version, the password to unlock all levels is 'SNAKESIXTEEN'.
+If you just want to take a glance at the different versions, the password to unlock all levels is 'SNAKESIXTEEN'.
