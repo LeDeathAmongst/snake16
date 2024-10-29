@@ -204,7 +204,7 @@ function original() {
 	
 	$(".instructions").html(description);
 	$(".description").html("Want to try a different level? Place your mouse over a level to see what you're in for.");
-	$(".score-to-beat").html("SNAKE by Yuval Ben-Hayun")
+	$(".score-to-beat").html("SNAKE by Star")
 }
 
 function createButtons() {
